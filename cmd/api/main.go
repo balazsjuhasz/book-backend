@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/balazsjuhasz/book-backend/internal/data"
 	"github.com/balazsjuhasz/book-backend/internal/driver"
 )
 
@@ -17,7 +18,7 @@ type application struct {
 	config   config
 	infoLog  *log.Logger
 	errorLog *log.Logger
-	db       *driver.DB
+	models   data.Models
 }
 
 func main() {
@@ -39,7 +40,7 @@ func main() {
 		config:   cfg,
 		infoLog:  infolog,
 		errorLog: errorLog,
-		db:       db,
+		models:   data.New(db.SQL),
 	}
 
 	err = app.serve()
