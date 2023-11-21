@@ -32,9 +32,20 @@ func (app *application) writeJSON(
 	data interface{},
 	headers ...http.Header,
 ) error {
-	out, err := json.MarshalIndent(data, "", "\t")
-	if err != nil {
-		return err
+	var output []byte
+
+	if app.environment == "development" {
+		out, err := json.MarshalIndent(data, "", "\t")
+		if err != nil {
+			return err
+		}
+		output = out
+	} else {
+		out, err := json.Marshal(data)
+		if err != nil {
+			return err
+		}
+		output = out
 	}
 
 	if len(headers) > 0 {
@@ -45,7 +56,7 @@ func (app *application) writeJSON(
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_, err = w.Write(out)
+	_, err := w.Write(output)
 	if err != nil {
 		return err
 	}
